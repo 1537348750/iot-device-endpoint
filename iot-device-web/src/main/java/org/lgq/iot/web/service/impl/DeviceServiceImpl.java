@@ -1,5 +1,6 @@
 package org.lgq.iot.web.service.impl;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.lgq.iot.sdk.mqtt.client.MqttClient;
 import org.lgq.iot.web.cache.ClientCache;
 import org.lgq.iot.web.dto.DeviceInfoDto;
@@ -19,24 +20,28 @@ public class DeviceServiceImpl implements DeviceService {
                 deviceInfoDto.getDeviceId(),
                 deviceInfoDto.getSecret(),
                 deviceInfoDto.getQos());
-        ClientCache.cacheDeviceClient(deviceInfoDto.getDeviceId(), client);
+        ClientCache.cacheClient(deviceInfoDto.getDeviceId(), client);
         client.connect(deviceInfoDto.getIsSSL());
     }
 
     @Override
     public void offline(String deviceId) {
-        ClientCache.removeDeviceClient(deviceId);
+        ClientCache.removeClient(deviceId);
     }
 
     @Override
     public void messageUp(MessageUpDto messageUpDto) {
-        MqttClient client = ClientCache.getDeviceClient(messageUpDto.getDeviceId());
-        client.messagesUp(messageUpDto.getContent(), messageUpDto.getQos(), null);
+        MqttClient client = ClientCache.getClient(messageUpDto.getDeviceId());
+        try {
+            client.messagesUp(messageUpDto.getContent(), messageUpDto.getQos(), null);
+        } catch (MqttException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void subscribeTopics(SubscribeTopics subScribeTopics) {
-        MqttClient client = ClientCache.getDeviceClient(subScribeTopics.getDeviceId());
-        client.subScribeTopics(subScribeTopics.getTopics());
+        MqttClient client = ClientCache.getClient(subScribeTopics.getDeviceId());
+        client.subScribeTopics(subScribeTopics.getTopics(), null);
     }
 }

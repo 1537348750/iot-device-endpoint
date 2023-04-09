@@ -6,9 +6,10 @@ import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.time.Instant;
@@ -20,7 +21,6 @@ public class MqttUtil {
 
     /**
      * 加载SSL证书
-     *
      * @param certPath 证书存放的相对路径
      * @return
      */
@@ -28,7 +28,7 @@ public class MqttUtil {
         SSLContext sslContext;
         InputStream stream = null;
         try {
-            stream = new FileInputStream(certPath);
+            stream = Files.newInputStream(Paths.get(certPath));
             sslContext = SSLContext.getInstance("TLS");
             KeyStore ts = KeyStore.getInstance("JKS");
             ts.load(stream, null);
@@ -52,9 +52,8 @@ public class MqttUtil {
     }
 
 
-    /***
+    /**
      * 调用sha256算法进行哈希
-     *
      * @param message
      * @param tStamp
      * @return
@@ -73,9 +72,8 @@ public class MqttUtil {
         return passWord;
     }
 
-    /***
+    /**
      * byte数组转16进制字符串
-     *
      * @param b
      * @return
      */
@@ -92,9 +90,8 @@ public class MqttUtil {
         return hs.toString().toLowerCase();
     }
 
-    /***
+    /**
      * 要求：10位数字
-     *
      * @return
      */
     public static String getTimeStamp() {

@@ -1,8 +1,7 @@
-package org.lgq.iot.sdk.mqtt.listener;
+package org.lgq.iot.sdk.mqtt.callback;
 
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.lgq.iot.sdk.mqtt.client.MqttClient;
 
@@ -10,17 +9,17 @@ import org.lgq.iot.sdk.mqtt.client.MqttClient;
  * Mqtt回调
  */
 @Slf4j
-public class DefaultCallback implements MqttCallbackExtended {
+public class DefaultMqttCallback implements CustomMqttCallback { // 自定义
 
     private MqttClient client;
 
-    public DefaultCallback(MqttClient client) {
+    public DefaultMqttCallback(MqttClient client) {
         this.client = client;
     }
 
     @Override
     public void connectComplete(boolean reconnect, String serviceURI) {
-        log.info("Mqtt client connected, address={}, reconnect={}", serviceURI, reconnect);
+        log.info("Mqtt client connected, address={}, reconnect={} .", serviceURI, reconnect);
         client.subScribeDefaultTopics();
     }
 
@@ -33,7 +32,7 @@ public class DefaultCallback implements MqttCallbackExtended {
 
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-        log.info("Receive mqtt topic={}, message={}", topic, message);
+        log.info("Receive mqtt topic={}, message={} .", topic, message);
     }
 
     @Override
