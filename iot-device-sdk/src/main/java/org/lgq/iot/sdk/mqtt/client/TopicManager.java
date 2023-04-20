@@ -3,6 +3,9 @@ package org.lgq.iot.sdk.mqtt.client;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 基于华为云MQTT协议的默认Topic
+ */
 public class TopicManager {
 
     // 上行：消息上报

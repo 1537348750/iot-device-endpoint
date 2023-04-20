@@ -11,6 +11,7 @@
     <modules>
         <module>iot-device-sdk</module>
         <module>iot-device-web</module>
+        <module>chatgpt</module>
     </modules>
 
     <properties>

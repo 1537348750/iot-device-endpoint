@@ -6,6 +6,9 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.lgq.iot.sdk.mqtt.callback.CustomMqttCallback;
 import org.lgq.iot.sdk.mqtt.callback.DefaultMqttCallback;
 import org.lgq.iot.sdk.mqtt.listener.*;
+import org.lgq.iot.sdk.mqtt.listener.impl.DefaultConnectListener;
+import org.lgq.iot.sdk.mqtt.listener.impl.DefaultPublishListener;
+import org.lgq.iot.sdk.mqtt.listener.impl.DefaultSubscribeListener;
 import org.lgq.iot.sdk.mqtt.utils.MqttUtil;
 
 import java.nio.charset.StandardCharsets;
@@ -15,7 +18,7 @@ import java.util.Objects;
 @Slf4j
 public class MqttClient {
 
-    private static final Integer DEFAULT_QOS = 1;
+    public static final Integer DEFAULT_QOS = 1;
 
     private String serverIp;
     private final String deviceId;
@@ -23,7 +26,7 @@ public class MqttClient {
     private Integer qosLevel;
 
     private TopicManager topicManager;
-    private MqttAsyncClient client;
+    private MqttAsyncClient asyncClient;
 
     /**
      * @param serviceIp 物联网平台设备接入域名或者IP地址
@@ -73,8 +76,9 @@ public class MqttClient {
         try {
             MqttConnectOptions options = new MqttConnectOptions();
             if (isSSL) {
-                options.setSocketFactory(MqttUtil.getOptionSocketFactory(Objects.requireNonNull(MqttClient.class.getClassLoader()
-                        .getResource("cn-north-4-device-client-rootcert.jks")).getPath()));
+                options.setSocketFactory(MqttUtil.getOptionSocketFactory(Objects.requireNonNull(
+                        MqttClient.class.getClassLoader().getResource("cn-north-4-device-client-rootcert.jks")
+                ).getPath()));
                 options.setHttpsHostnameVerificationEnabled(false);
             }
             options.setCleanSession(false);
@@ -83,15 +87,23 @@ public class MqttClient {
             options.setAutomaticReconnect(true);
             options.setUserName(deviceId);
             options.setPassword(MqttUtil.getPassword(secret).toCharArray());
+
             log.info("Start mqtt connect, url={}", url);
-            client = new MqttAsyncClient(url, MqttUtil.getClientId(deviceId), new MemoryPersistence());
+            asyncClient = new MqttAsyncClient(url, MqttUtil.getClientId(deviceId), new MemoryPersistence());
             callback = (callback != null) ? callback : new DefaultMqttCallback(this);
-            client.setCallback(callback);
+            asyncClient.setCallback(callback);
             listener = (listener != null) ? listener : new DefaultConnectListener(this, isSSL);
-            client.connect(options, null, listener);
+            asyncClient.connect(options, null, listener);
         } catch (Exception e) {
             log.error("connect fail, e={}", e.getLocalizedMessage());
         }
+    }
+
+    public boolean isConnect() {
+        if (asyncClient == null) {
+            return false;
+        }
+        return asyncClient.isConnected();
     }
 
     /**
@@ -99,8 +111,11 @@ public class MqttClient {
      */
     public void close() {
         try {
-            client.disconnect();
-            client.close();
+            if (asyncClient == null) {
+                return;
+            }
+            asyncClient.disconnect();
+            asyncClient.close();
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -131,7 +146,7 @@ public class MqttClient {
         try {
             listener = (listener != null) ? listener : new DefaultSubscribeListener();
             for (String topic : topics) {
-                client.subscribe(topic, qosLevel, null, listener);
+                asyncClient.subscribe(topic, qosLevel, null, listener);
             }
         } catch (MqttException e) {
             e.printStackTrace();
@@ -154,6 +169,13 @@ public class MqttClient {
     }
 
     /**
+     * 发布
+     */
+    public IMqttDeliveryToken publishData(String data, String topic, Integer qosLv, CustomPublishListener listener) throws MqttException {
+        return this.publish(getPayload(data), topic, qosLv, listener);
+    }
+
+    /**
      * 发布二进制数据
      */
     public IMqttDeliveryToken publishBinaryData(byte[] payload, String topic, Integer qosLv, CustomPublishListener listener) throws MqttException {
@@ -171,7 +193,7 @@ public class MqttClient {
         MqttMessage message = new MqttMessage(payload);
         int qos = (qosLv == null) ? qosLevel : (qosLv == 0 || qosLv == 1 || qosLv == 2) ? qosLv : qosLevel;
         listener = (listener != null) ? listener : new DefaultPublishListener(payload);
-        return client.publish(topic, message, qos, listener);
+        return asyncClient.publish(topic, message, qos, listener);
     }
 
     private byte[] getPayload(String string) {
