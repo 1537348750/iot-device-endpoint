@@ -1,7 +1,7 @@
 package org.lgq.iot.sdk.mqtt.utils;
 
 public class ExceptionUtil {
-    private static final int DEFAULT_LINE = 10;
+    private static final int DEFAULT_LINE = 15;
 
     public static String getExceptionCause(Throwable e) {
         StringBuilder sb;

@@ -1,5 +1,7 @@
 package org.lgq.iot.sdk.mqtt.utils;
 
+import org.lgq.iot.sdk.mqtt.client.DeviceInfo;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.net.SocketFactory;
@@ -94,16 +96,23 @@ public class MqttUtil {
      * 要求：10位数字
      * @return
      */
-    public static String getTimeStamp() {
+    private static String getTimeStamp() {
         return ZonedDateTime.ofInstant(Instant.now(), ZoneId.of("UTC"))
                 .format(DateTimeFormatter.ofPattern("yyyyMMddHH"));
     }
 
-    public static String getClientId(String deviceId) {
-        return deviceId + "_0_0_" + getTimeStamp();
+    private static String getClientId(String deviceId, String timeStamp) {
+        return deviceId + "_0_0_" + timeStamp;
     }
 
-    public static String getPassword(String secret) {
-        return sha256_mac(secret, getTimeStamp());
+    private static String getPassword(String secret, String timeStamp) {
+        return sha256_mac(secret, timeStamp);
+    }
+
+    public static DeviceInfo getDeviceInfo(String deviceId, String secret) {
+        String timeStamp = getTimeStamp();
+        String clientId = getClientId(deviceId, timeStamp);
+        String password = getPassword(secret, timeStamp);
+        return new DeviceInfo(clientId, password);
     }
 }

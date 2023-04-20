@@ -6,6 +6,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.lgq.iot.sdk.mqtt.client.MqttClient;
 import org.lgq.iot.sdk.mqtt.listener.CustomResponseListener;
 import org.lgq.iot.sdk.mqtt.listener.impl.DefaultResponseListener;
+import org.lgq.iot.sdk.mqtt.utils.ExceptionUtil;
 
 /**
  * Mqtt回调
@@ -33,8 +34,7 @@ public class DefaultMqttCallback implements CustomMqttCallback {
 
     @Override
     public void connectionLost(Throwable throwable) {
-        log.warn("Connection lost....");
-        throwable.printStackTrace();
+        log.warn("Connection lost.... e = {}", ExceptionUtil.getBriefStackTrace(throwable));
         // TODO 可在此处实现重连
     }
 

@@ -81,15 +81,16 @@ public class MqttClient {
                 ).getPath()));
                 options.setHttpsHostnameVerificationEnabled(false);
             }
+            DeviceInfo deviceInfo = MqttUtil.getDeviceInfo(deviceId, secret);
             options.setCleanSession(false);
             options.setKeepAliveInterval(120);
             options.setConnectionTimeout(5000);
             options.setAutomaticReconnect(true);
             options.setUserName(deviceId);
-            options.setPassword(MqttUtil.getPassword(secret).toCharArray());
+            options.setPassword(deviceInfo.getPassword().toCharArray());
 
             log.info("Start mqtt connect, url={}", url);
-            asyncClient = new MqttAsyncClient(url, MqttUtil.getClientId(deviceId), new MemoryPersistence());
+            asyncClient = new MqttAsyncClient(url, deviceInfo.getClientId(), new MemoryPersistence());
             callback = (callback != null) ? callback : new DefaultMqttCallback(this);
             asyncClient.setCallback(callback);
             listener = (listener != null) ? listener : new DefaultConnectListener(this, isSSL);
