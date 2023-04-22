@@ -17,13 +17,13 @@ public class DefaultPublishListener implements CustomPublishListener {
 
     @Override
     public void onSuccess(IMqttToken iMqttToken) {
-        log.info("Publish mqtt message success, topic={}, message={} .",
+        log.info("Publish mqtt message success, topic={}, message={}",
                 iMqttToken.getTopics()[0], new String(payload, StandardCharsets.UTF_8));
     }
 
     @Override
     public void onFailure(IMqttToken iMqttToken, Throwable e) {
-        log.error("Publish mqtt message fail, topic={}, message={} .",
+        log.error("Publish mqtt message fail, topic={}, message={}",
                 iMqttToken.getTopics()[0], new String(payload, StandardCharsets.UTF_8), e);
     }
 }

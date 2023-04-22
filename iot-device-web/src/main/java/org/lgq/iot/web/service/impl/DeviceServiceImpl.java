@@ -17,7 +17,6 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public void online(DeviceInfoDto deviceInfoDto) {
-        // check params
         MqttClient client = new MqttClient(
                 deviceInfoDto.getServiceIp(),
                 deviceInfoDto.getDeviceId(),

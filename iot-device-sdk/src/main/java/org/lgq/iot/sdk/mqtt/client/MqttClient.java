@@ -5,10 +5,13 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.lgq.iot.sdk.mqtt.callback.CustomMqttCallback;
 import org.lgq.iot.sdk.mqtt.callback.DefaultMqttCallback;
-import org.lgq.iot.sdk.mqtt.listener.*;
+import org.lgq.iot.sdk.mqtt.listener.CustomConnectListener;
+import org.lgq.iot.sdk.mqtt.listener.CustomPublishListener;
+import org.lgq.iot.sdk.mqtt.listener.CustomSubscribeListener;
 import org.lgq.iot.sdk.mqtt.listener.impl.DefaultConnectListener;
 import org.lgq.iot.sdk.mqtt.listener.impl.DefaultPublishListener;
 import org.lgq.iot.sdk.mqtt.listener.impl.DefaultSubscribeListener;
+import org.lgq.iot.sdk.mqtt.utils.ExceptionUtil;
 import org.lgq.iot.sdk.mqtt.utils.MqttUtil;
 
 import java.nio.charset.StandardCharsets;
@@ -38,7 +41,7 @@ public class MqttClient {
         this.serverIp = serviceIp;
         this.deviceId = deviceId;
         this.secret = secret;
-        this.qosLevel = qosLevel;
+        this.qosLevel = (qosLevel == null) ? DEFAULT_QOS : (qosLevel == 0 || qosLevel == 1 || qosLevel == 2) ? qosLevel : DEFAULT_QOS;
         this.topicManager = new TopicManager(deviceId);
     }
 
@@ -54,31 +57,31 @@ public class MqttClient {
      * mqtt建链
      * @param isSSL true:url=ssl://${serverIp}:8883, false:url=tcp://${serverIp}:1883
      */
-    public void connect(boolean isSSL) {
+    public void connect(Boolean isSSL) {
         this.connect(isSSL, null, null);
     }
 
-    public void connect(boolean isSSL, CustomMqttCallback callback) {
+    public void connect(Boolean isSSL, CustomMqttCallback callback) {
         this.connect(isSSL, callback, null);
     }
 
-    public void connect(boolean isSSL, CustomConnectListener listener) {
+    public void connect(Boolean isSSL, CustomConnectListener listener) {
         this.connect(isSSL, null, listener);
     }
 
-    public void connect(boolean isSSL, CustomMqttCallback callback, CustomConnectListener listener) {
+    public void connect(Boolean isSSL, CustomMqttCallback callback, CustomConnectListener listener) {
         String url;
-        if (isSSL) {
+        boolean ssl = (isSSL == null) ? false : isSSL;
+        if (ssl) {
             url = "ssl://" + serverIp + ":" + 8883; //mqtts连接
         } else {
             url = "tcp://" + serverIp + ":" + 1883; //mqtt连接
         }
         try {
             MqttConnectOptions options = new MqttConnectOptions();
-            if (isSSL) {
-                options.setSocketFactory(MqttUtil.getOptionSocketFactory(Objects.requireNonNull(
-                        MqttClient.class.getClassLoader().getResource("cn-north-4-device-client-rootcert.jks")
-                ).getPath()));
+            if (ssl) {
+                String certFileName = "cn-north-4-device-client-rootcert.jks";
+                options.setSocketFactory(MqttUtil.getOptionSocketFactory(Objects.requireNonNull(MqttClient.class.getClassLoader().getResource(certFileName)).getPath()));
                 options.setHttpsHostnameVerificationEnabled(false);
             }
             DeviceInfo deviceInfo = MqttUtil.getDeviceInfo(deviceId, secret);
@@ -93,10 +96,10 @@ public class MqttClient {
             asyncClient = new MqttAsyncClient(url, deviceInfo.getClientId(), new MemoryPersistence());
             callback = (callback != null) ? callback : new DefaultMqttCallback(this);
             asyncClient.setCallback(callback);
-            listener = (listener != null) ? listener : new DefaultConnectListener(this, isSSL);
+            listener = (listener != null) ? listener : new DefaultConnectListener(this, ssl);
             asyncClient.connect(options, null, listener);
         } catch (Exception e) {
-            log.error("connect fail, e={}", e.getLocalizedMessage());
+            log.error("connect fail, e={}", ExceptionUtil.getBriefStackTrace(e));
         }
     }
 
@@ -131,14 +134,6 @@ public class MqttClient {
 
     /**
      * 订阅下行topic
-     * @param topics 下行topic，自定义topic的列表
-     */
-    public void subScribeTopics(List<String> topics) {
-        this.subScribeTopics(topics, null);
-    }
-
-    /**
-     * 订阅下行topic
      * @param topics   下行topic，自定义topic
      * @param listener 订阅topic订阅的结果监听器
      */
@@ -156,24 +151,22 @@ public class MqttClient {
 
     /**
      * 消息上报
-     * @param message 上报的消息内容，可以是字符串，也可以是json字符串
-     */
-    public IMqttDeliveryToken messagesUp(String message, CustomPublishListener listener) throws MqttException {
-        return this.publish(getPayload(message), topicManager.getMessagesUpTopic(), null, listener);
-    }
-
-    /**
-     * 消息上报
      */
     public IMqttDeliveryToken messagesUp(String message, Integer qosLv, CustomPublishListener listener) throws MqttException {
         return this.publish(getPayload(message), topicManager.getMessagesUpTopic(), qosLv, listener);
     }
 
     /**
-     * 发布
+     * 响应命令下发
+     * @param data      命令响应的内容
+     * @param requestId 命令下发携带的request_id
+     * @param qosLv
+     * @param listener
+     * @return
+     * @throws MqttException
      */
-    public IMqttDeliveryToken publishData(String data, String topic, Integer qosLv, CustomPublishListener listener) throws MqttException {
-        return this.publish(getPayload(data), topic, qosLv, listener);
+    public IMqttDeliveryToken commandsResp(String data, String requestId, Integer qosLv, CustomPublishListener listener) throws MqttException {
+        return this.publish(getPayload(data), topicManager.getCommandsRespTopic(requestId), qosLv, listener);
     }
 
     /**

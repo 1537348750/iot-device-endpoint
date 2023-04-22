@@ -1,5 +1,6 @@
 package org.lgq.iot.sdk.mqtt.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.lgq.iot.sdk.mqtt.client.DeviceInfo;
 
 import javax.crypto.Mac;
@@ -11,6 +12,7 @@ import javax.net.ssl.TrustManagerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.SecureRandom;
@@ -19,6 +21,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Slf4j
 public class MqttUtil {
 
     /**
@@ -39,14 +42,18 @@ public class MqttUtil {
             TrustManager[] tm = tmf.getTrustManagers();
             sslContext.init(null, tm, new SecureRandom());
         } catch (Exception e) {
-            e.printStackTrace();
+            if (e instanceof InvalidPathException) {
+                log.error(e.getMessage());
+            } else {
+                log.error("e = {}", ExceptionUtil.getBriefStackTrace(e));
+            }
             return null;
         } finally {
             if (stream != null) {
                 try {
                     stream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("e = {}", ExceptionUtil.getBriefStackTrace(e));
                 }
             }
         }
@@ -69,7 +76,7 @@ public class MqttUtil {
             byte[] bytes = sha256_HMAC.doFinal(message.getBytes());
             passWord = byteArrayToHexString(bytes);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("e = {}", ExceptionUtil.getBriefStackTrace(e));
         }
         return passWord;
     }

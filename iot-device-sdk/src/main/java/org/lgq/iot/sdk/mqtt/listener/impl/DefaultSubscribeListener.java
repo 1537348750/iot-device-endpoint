@@ -9,11 +9,11 @@ public class DefaultSubscribeListener implements CustomSubscribeListener {
 
     @Override
     public void onSuccess(IMqttToken iMqttToken) {
-        log.info("Subscribe mqtt topic success, topic={} .", iMqttToken.getTopics()[0]);
+        log.info("Subscribe mqtt topic success, topic={}", iMqttToken.getTopics()[0]);
     }
 
     @Override
     public void onFailure(IMqttToken iMqttToken, Throwable e) {
-        log.error("Subscribe mqtt topic fail, topic={} .", iMqttToken.getTopics()[0], e);
+        log.error("Subscribe mqtt topic fail, topic={}", iMqttToken.getTopics()[0], e);
     }
 }

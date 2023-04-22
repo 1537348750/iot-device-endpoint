@@ -15,6 +15,7 @@
     </modules>
 
     <properties>
+        <project.version>1.0.0</project.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,33 +36,38 @@
 
     <dependencies>
 
+
     </dependencies>
 
     <build>
         <plugins>
+            <!--<plugin>-->
+            <!--    <groupId>org.apache.maven.plugins</groupId>-->
+            <!--    <artifactId>maven-compiler-plugin</artifactId>-->
+            <!--    <version>3.8.1</version>-->
+            <!--    <configuration>-->
+            <!--        <source>1.8</source>-->
+            <!--        <target>1.8</target>-->
+            <!--        <encoding>UTF-8</encoding>-->
+            <!--    </configuration>-->
+            <!--</plugin>-->
+
+            <!-- 将项目依赖的jar包收集在lib目录中 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
-                <configuration>
-                    <mainClass>org.lgq.work.Application</mainClass>
-                </configuration>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
-                        <id>repackage</id>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>repackage</goal>
+                            <goal>copy-dependencies</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

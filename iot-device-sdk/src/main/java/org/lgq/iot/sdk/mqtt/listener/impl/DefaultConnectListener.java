@@ -24,16 +24,16 @@ public class DefaultConnectListener implements CustomConnectListener {
     @Override
     public void onSuccess(IMqttToken iMqttToken) {
         retryTimes = 0;
-        log.info("Mqtt connect success, clientId={} .", iMqttToken.getClient().getClientId());
+        log.info("Mqtt connect success, clientId={}", iMqttToken.getClient().getClientId());
     }
 
     @Override
     public void onFailure(IMqttToken iMqttToken, Throwable throwable) {
-        log.error("Mqtt connect fail, clientId={} .", iMqttToken.getClient().getClientId(), throwable);
+        log.error("Mqtt connect fail, clientId={}", iMqttToken.getClient().getClientId(), throwable);
 
         //退避重连
         long waitTimeUntilNextRetry = getNextRetryWaitTime();
-        log.warn("Retreat reconnection--{}, clientId={} .", retryTimes, iMqttToken.getClient().getClientId());
+        log.warn("Retreat reconnection--{}, clientId={}", retryTimes, iMqttToken.getClient().getClientId());
         try {
             Thread.sleep(waitTimeUntilNextRetry);
         } catch (InterruptedException e) {
