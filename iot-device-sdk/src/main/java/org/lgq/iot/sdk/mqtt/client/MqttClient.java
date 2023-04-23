@@ -157,6 +157,29 @@ public class MqttClient {
     }
 
     /**
+     * 属性上报
+     * @param properties
+     */
+    public IMqttDeliveryToken propertiesReport(String properties, Integer qosLv, CustomPublishListener listener) throws MqttException {
+        return this.publish(getPayload(properties), topicManager.getPropertiesReportTopic(), qosLv, listener);
+    }
+
+    /**
+     * 网关子设备属性上报
+     * @param properties
+     */
+    public IMqttDeliveryToken gatewaySubDevicePropertiesReport(String properties, Integer qosLv, CustomPublishListener listener)  throws MqttException {
+        return this.publish(getPayload(properties), topicManager.getGatewaySubDevicePropertiesReportTopic(), qosLv, listener);
+    }
+
+    /**
+     * 事件上报
+     */
+    public IMqttDeliveryToken eventUp(String data, Integer qosLv, CustomPublishListener listener) throws MqttException {
+        return this.publish(getPayload(data), topicManager.getEventsUpTopic(), qosLv, listener);
+    }
+
+    /**
      * 响应命令下发
      * @param data      命令响应的内容
      * @param requestId 命令下发携带的request_id
@@ -168,6 +191,7 @@ public class MqttClient {
     public IMqttDeliveryToken commandsResp(String data, String requestId, Integer qosLv, CustomPublishListener listener) throws MqttException {
         return this.publish(getPayload(data), topicManager.getCommandsRespTopic(requestId), qosLv, listener);
     }
+
 
     /**
      * 发布二进制数据

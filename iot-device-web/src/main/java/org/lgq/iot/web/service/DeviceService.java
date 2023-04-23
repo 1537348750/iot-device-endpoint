@@ -1,7 +1,6 @@
 package org.lgq.iot.web.service;
 
 import org.lgq.iot.web.dto.DeviceInfoDto;
-import org.lgq.iot.web.dto.MessageUpDto;
 import org.lgq.iot.web.dto.SubscribeTopics;
 
 public interface DeviceService {
@@ -10,7 +9,15 @@ public interface DeviceService {
 
     void offline(String deviceId);
 
-    void messageUp(MessageUpDto messageUpDto);
-
     void subscribeTopics(SubscribeTopics subScribeTopics);
+
+    void messageUp(String json, String deviceId);
+
+    void eventUp(String json, String deviceId);
+
+    void propertiesReport(String json, String deviceId);
+
+    void gatewaySubDevicePropertiesReport(String json, String deviceId);
+
+
 }
