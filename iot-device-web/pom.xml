@@ -62,7 +62,7 @@
 
     <build>
         <plugins>
-            <!-- 主启动类所在module使用spring-boot-maven-plugin，打包可执行jar包 -->
+            <!-- 主启动类所在module才能使用spring-boot-maven-plugin，打包成可执行jar包 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -80,6 +80,7 @@
                 </executions>
             </plugin>
 
+            <!-- 将引入本module的其他module的jar包也加入lib -->
             <!--<plugin>-->
             <!--    <artifactId>maven-assembly-plugin</artifactId>-->
             <!--    <version>3.3.0</version>-->

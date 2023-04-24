@@ -17,9 +17,11 @@ public class DefaultResponseListener implements CustomResponseListener {
 
     @Override
     public void response(MqttClient client, String topic, MqttMessage mqttMessage) {
-        if (topic != null && topic.startsWith("$oc/devices/") && topic.contains("/sys/commands/request_id=")) {
-            log.debug("commands response...");
-            autoCommandResponse(client, topic, mqttMessage);
+        if (topic != null && topic.startsWith("$oc/devices/") ) {
+            if (topic.contains("/sys/commands/request_id=")) {
+                log.debug("commands response...");
+                autoCommandResponse(client, topic, mqttMessage);
+            }
         }
 
 
