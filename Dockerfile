@@ -1,26 +1,29 @@
-# 基础镜像
+# base image
 FROM openjdk:8-jre-alpine
 
-# 镜像作者信息
+# image author
 LABEL maintainer="LGQ"
 
-# 设置环境变量
-ENV APP_HOME /iot/iot-device-endpoint
-ENV APP_NAME iot-device-web-1.0.0.jar
+# set env variables
+ENV IOT_HOME /iot/iot-device-web
+ENV IOT_NAME iot-device-web-1.0.0.jar
 
-# 创建应用目录并将当前目录下的 lib 目录复制到应用目录下
-RUN mkdir -p $APP_HOME/lib
-COPY lib $APP_HOME/lib
+# create image path:/iot/iot-device-web/lib and copy 'lib' to this path
+RUN mkdir -p $IOT_HOME/lib
+COPY lib $IOT_HOME/lib
 
-# 复制当前目录下的 iot-device-web-1.0.0.jar 文件到应用目录下
-# COPY iot-device-web-1.0.0.jar $APP_HOME
+# create image path:/iot/iot-device-web/script and copy script file to this path
+RUN mkdir -p $IOT_HOME/script
+COPY start.sh $IOT_HOME/script
+COPY Dockerfile $IOT_HOME/script
+COPY build_image.sh $IOT_HOME/script
 
-# 设置工作目录
-WORKDIR $APP_HOME
+# work path
+WORKDIR $IOT_HOME
 
-# 暴露应用端口
+# exposed port
 EXPOSE 8001
 
-# 启动应用(待更换命令执行start.sh启动)
-CMD ["java", "-jar", "/iot/iot-device-endpoint/lib/iot-device-web-1.0.0.jar"]
+# start(with start.sh)
+CMD ["java", "-jar", "/iot/iot-device-web/lib/iot-device-web-1.0.0.jar"]
 #USER paas
