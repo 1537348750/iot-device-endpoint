@@ -1,29 +1,30 @@
-# base image
-FROM openjdk:8-jre-alpine
 
-# image author
+FROM openjdk:8-jre-alpine
+# FROM openjdk:8-jre-slim
+# FROM openjdk:8-jre
+# FROM adoptopenjdk:8-jre-hotspot
+# FROM amazoncorretto:8
+
 LABEL maintainer="LGQ"
 
-# set env variables
-ENV IOT_HOME /iot/iot-device-web
-ENV IOT_NAME iot-device-web-1.0.0.jar
+ENV APP_HOME /iot/iot-device-web
+ENV APP_NAME iot-device-web-1.0.0.jar
 
-# create image path:/iot/iot-device-web/lib and copy 'lib' to this path
-RUN mkdir -p $IOT_HOME/lib
-COPY lib $IOT_HOME/lib
+RUN mkdir -p \
+        /iot \
+        $APP_HOME/lib \
+        $APP_HOME/script \
+        $APP_HOME/logs/history
 
-# create image path:/iot/iot-device-web/script and copy script file to this path
-RUN mkdir -p $IOT_HOME/script
-COPY start.sh $IOT_HOME/script
-COPY Dockerfile $IOT_HOME/script
-COPY build_image.sh $IOT_HOME/script
+RUN addgroup -S paas && adduser -S -G paas paas
+RUN chown -R paas:paas /iot && chmod -R 755 /iot
 
-# work path
-WORKDIR $IOT_HOME
+# copy file
+COPY lib $APP_HOME/lib
+COPY start.sh $APP_HOME/script
+COPY Dockerfile $APP_HOME/script
 
-# exposed port
+WORKDIR $APP_HOME
 EXPOSE 8001
-
-# start(with start.sh)
+USER paas
 CMD ["java", "-jar", "/iot/iot-device-web/lib/iot-device-web-1.0.0.jar"]
-#USER paas

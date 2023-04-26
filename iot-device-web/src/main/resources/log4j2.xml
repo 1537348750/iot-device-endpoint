@@ -15,11 +15,11 @@
         </Console>
 
         <!-- 按照日期生成日志文件 -->
-        <RollingFile name="RollingFile" fileName="${log.path}/${log.file}" filePattern="${log.path}/${log.file}-%d{yyyy-MM-dd}">
+        <RollingRandomAccessFile name="RollingFile" fileName="${log.path}/${log.file}" filePattern="${log.path}/${log.file}-%d{yyyy-MM-dd}">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5p %c{1}:%L - %m%n"/>
             <Policies>
                 <!-- 按照文件大小生成日志文件 -->
-                <SizeBasedTriggeringPolicy size="50 MB"/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
             </Policies>
             <!-- 保留100个日志文件 -->
             <DefaultRolloverStrategy max="100">
@@ -30,7 +30,7 @@
                 </Delete>
                 <GzCompress/>
             </DefaultRolloverStrategy>
-        </RollingFile>
+        </RollingRandomAccessFile>
     </Appenders>
 
     <Loggers>
