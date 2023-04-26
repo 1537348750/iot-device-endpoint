@@ -10,8 +10,7 @@ LABEL maintainer="LGQ"
 ENV APP_HOME /iot/iot-device-web
 ENV APP_NAME iot-device-web-1.0.0.jar
 
-RUN mkdir -p \
-        /iot \
+RUN mkdir -p /iot \
         $APP_HOME/lib \
         $APP_HOME/script \
         $APP_HOME/logs/history
