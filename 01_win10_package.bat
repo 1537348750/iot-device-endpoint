@@ -1,8 +1,12 @@
 @echo off
 setlocal
 
+echo This file is a win10 packaging script,
+echo will build a compressed package called iot-device-web-package.zip for building Docker images.
+echo Please note: Don't include Chinese or other special characters in this file, otherwise errors may occur during operation.
+
 if not exist iot-device-web-package.zip (
-  echo iot-device-web-package.zip not exists, skipping delete command
+  echo iot-device-web-package.zip not exists
 ) else (
   del /s /q iot-device-web-package.zip
 )
@@ -10,7 +14,7 @@ if not exist iot-device-web-package.zip (
 if not exist iot-device-web-package (
   mkdir iot-device-web-package
 ) else (
-  echo iot-device-web-package already exists, skipping mkdir command
+  echo iot-device-web-package already exists
 )
 
 cd iot-device-web-package
@@ -20,18 +24,19 @@ if not exist lib (
   echo lib already exists, skipping mkdir command
 )
 
-xcopy ..\iot-device-web\target\lib\*.jar lib\
+echo xcopy ..\iot-device-web\target\lib\*.jar lib\
 xcopy ..\iot-device-web\target\*.jar lib\
 
-copy ..\start.sh .
-copy ..\Dockerfile .
+copy ..\script\start.sh .
+copy ..\script\Dockerfile .
+copy ..\script\run_container.sh .
 
 powershell Compress-Archive -Path .\* -DestinationPath ..\iot-device-web-package.zip
 
 cd ..
 rmdir /s /q iot-device-web-package
 
-echo 记录输出日志和异常报错到win_package_log.txt文件
+echo Record the output log and exception error to the win package log.txt file
 goto :end
 
 :error

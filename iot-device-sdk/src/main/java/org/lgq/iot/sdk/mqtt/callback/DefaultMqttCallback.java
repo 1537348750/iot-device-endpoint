@@ -28,18 +28,18 @@ public class DefaultMqttCallback implements CustomMqttCallback {
 
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-        log.info("Receive mqtt topic={}, message={}.", topic, message);
+        log.info("Receive mqtt topic={}, message={}", topic, message);
         responseListener.response(client, topic, message);
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-        log.info("Mqtt message deliver complete.");
+        log.info("Mqtt message deliver complete");
     }
 
     @Override
     public void connectComplete(boolean reconnect, String serviceURI) {
-        log.info("Mqtt client connected, address={}, reconnect={}.", serviceURI, reconnect);
+        log.info("Mqtt client connected, address={}, reconnect={}", serviceURI, reconnect);
         client.subScribeDefaultTopics();
     }
 

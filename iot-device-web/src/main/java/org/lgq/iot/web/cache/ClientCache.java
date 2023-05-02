@@ -22,10 +22,14 @@ public class ClientCache {
 
     public static MqttClient removeClient(String deviceId) {
         try {
-            getClient(deviceId).close();
+            MqttClient client = getClient(deviceId);
+            if (client != null) {
+                client.close();
+                return DEVICE_CACHE.remove(deviceId);
+            }
         } catch (Exception e) {
             log.error("close client fail, e = {}", ExceptionUtil.getBriefStackTrace(e));
         }
-        return DEVICE_CACHE.remove(deviceId);
+        return null;
     }
 }

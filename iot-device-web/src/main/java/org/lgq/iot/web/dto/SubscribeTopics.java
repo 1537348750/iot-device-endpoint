@@ -13,6 +13,8 @@ public class SubscribeTopics {
 
     private String deviceId;
 
+    private Integer qos;
+
     private List<String> topics;
 
 }

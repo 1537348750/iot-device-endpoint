@@ -23,7 +23,7 @@ public class DeviceController {
         return "device connect success !";
     }
 
-    @GetMapping("/offline/{device_id}")
+    @DeleteMapping("/{device_id}/offline")
     public String offline(@PathVariable("device_id") String deviceId) {
         deviceService.offline(deviceId);
         return "device offline !";
@@ -35,9 +35,9 @@ public class DeviceController {
         return "subscribe topics success !";
     }
 
-    @PostMapping("/message-up")
-    public String messagesUp(@RequestBody Map<String, Object> map, String deviceId) {
-        String json = null;
+    @PostMapping("/{device_id}/message-up")
+    public String messagesUp(@RequestBody Map<String, Object> map, @PathVariable("device_id") String deviceId) {
+        String json;
         try {
             json = BeanUtil.pojoToJson(map);
             deviceService.messageUp(json, deviceId);
@@ -47,8 +47,8 @@ public class DeviceController {
         }
     }
 
-    @PostMapping("/event-up")
-    public String eventUp(@RequestBody Map<String, Object> map, String deviceId) {
+    @PostMapping("/{device_id}/event-up")
+    public String eventUp(@RequestBody Map<String, Object> map, @PathVariable("device_id") String deviceId) {
         try {
             String json = BeanUtil.pojoToJson(map);
             deviceService.eventUp(json, deviceId);
@@ -58,8 +58,8 @@ public class DeviceController {
         }
     }
 
-    @PostMapping("/properties-report")
-    public String propertiesReport(@RequestBody Map<String, Object> map, String deviceId) {
+    @PostMapping("/{device_id}/properties-report")
+    public String propertiesReport(@RequestBody Map<String, Object> map, @PathVariable("device_id") String deviceId) {
         try {
             String json = BeanUtil.pojoToJson(map);
             deviceService.propertiesReport(json, deviceId);
@@ -69,8 +69,8 @@ public class DeviceController {
         }
     }
 
-    @PostMapping("/gateway-subDevice/properties-report")
-    public String gatewaySubDevicePropertiesReport(@RequestBody Map<String, Object> map, String deviceId) {
+    @PostMapping("/{device_id}/gateway-subdevice/properties-report")
+    public String gatewaySubDevicePropertiesReport(@RequestBody Map<String, Object> map, @PathVariable("device_id") String deviceId) {
         try {
             String json = BeanUtil.pojoToJson(map);
             deviceService.gatewaySubDevicePropertiesReport(json, deviceId);

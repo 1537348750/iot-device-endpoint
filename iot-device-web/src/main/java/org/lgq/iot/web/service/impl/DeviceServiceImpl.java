@@ -15,7 +15,8 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public void online(DeviceInfoDto deviceInfoDto) {
-        MqttClient client = new MqttClient(
+        ClientCache.removeClient(deviceInfoDto.getDeviceId());
+        MqttClient client  = new MqttClient(
                 deviceInfoDto.getServiceIp(),
                 deviceInfoDto.getDeviceId(),
                 deviceInfoDto.getSecret(),
@@ -51,7 +52,7 @@ public class DeviceServiceImpl implements DeviceService {
     public void eventUp(String json, String deviceId) {
         MqttClient client = ClientCache.getClient(deviceId);
         try {
-            client.eventUp(json,  null, null);
+            client.eventUp(json, null, null);
         } catch (MqttException e) {
             throw new RuntimeException(e);
         }
@@ -61,7 +62,7 @@ public class DeviceServiceImpl implements DeviceService {
     public void propertiesReport(String json, String deviceId) {
         MqttClient client = ClientCache.getClient(deviceId);
         try {
-            client.propertiesReport(json,  null, null);
+            client.propertiesReport(json, null, null);
         } catch (MqttException e) {
             throw new RuntimeException(e);
         }
@@ -71,7 +72,7 @@ public class DeviceServiceImpl implements DeviceService {
     public void gatewaySubDevicePropertiesReport(String json, String deviceId) {
         MqttClient client = ClientCache.getClient(deviceId);
         try {
-            client.gatewaySubDevicePropertiesReport(json,  null, null);
+            client.gatewaySubDevicePropertiesReport(json, null, null);
         } catch (MqttException e) {
             throw new RuntimeException(e);
         }
