@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class ClientCache {
 
-    private static Map<String, MqttClient> DEVICE_CACHE = new ConcurrentHashMap<>(10000);
+    private static Map<String, MqttClient> DEVICE_CACHE = new ConcurrentHashMap<>(10000, 1f);
 
     public static MqttClient cacheClient(String deviceId, MqttClient client) {
         return DEVICE_CACHE.put(deviceId, client);

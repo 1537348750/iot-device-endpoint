@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.lgq.iot.sdk.mqtt.client.MqttClient;
 import org.lgq.iot.web.cache.ClientCache;
+import org.lgq.iot.web.config.ContainerIPConfig;
 import org.lgq.iot.web.dto.DeviceInfoDto;
 import org.lgq.iot.web.dto.SubscribeTopics;
 import org.lgq.iot.web.service.DeviceService;
@@ -16,19 +17,23 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public void online(DeviceInfoDto deviceInfoDto) {
         ClientCache.removeClient(deviceInfoDto.getDeviceId());
-        MqttClient client  = new MqttClient(
+        MqttClient client = new MqttClient(
                 deviceInfoDto.getServiceIp(),
                 deviceInfoDto.getDeviceId(),
                 deviceInfoDto.getSecret(),
                 deviceInfoDto.getQos());
         client.connect(deviceInfoDto.getIsSSL());
         ClientCache.cacheClient(deviceInfoDto.getDeviceId(), client);
+        log.info("Mqtt device online, deviceId={}, containerIp={}, qos={},",
+                deviceInfoDto.getDeviceId(), ContainerIPConfig.getContainerIp(), client.getQosLevel());
         // TODO 设备上线后打印设备客户端缓存所在的节点
     }
 
     @Override
     public void offline(String deviceId) {
         ClientCache.removeClient(deviceId);
+        log.info("Mqtt device offline, deviceId={}, containerIp={}",
+                deviceId, ContainerIPConfig.getContainerIp());
     }
 
     @Override

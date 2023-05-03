@@ -125,10 +125,17 @@ public class MqttClient {
         }
     }
 
+    public Integer getQosLevel() {
+        return qosLevel;
+    }
+
     /**
      * 订阅默认下行topic
      */
     public void subScribeDefaultTopics() {
+        if (topicManager.getDEFAULT_DOWN_TOPICS().size() == 0) {
+            return;
+        }
         this.subScribeTopics(topicManager.getDEFAULT_DOWN_TOPICS(), null);
     }
 
