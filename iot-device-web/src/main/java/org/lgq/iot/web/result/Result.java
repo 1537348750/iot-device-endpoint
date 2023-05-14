@@ -3,6 +3,7 @@ package org.lgq.iot.web.result;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.lgq.iot.sdk.mqtt.exception.IotCode;
 
 /**
  * 全局统一返回结果类
@@ -34,6 +35,12 @@ public class Result {
         Result result = new Result();
         result.setCode(iotCode.getCode());
         result.setMessage(iotCode.getMessage());
+        return result;
+    }
+
+    public static Result failed(String code) {
+        Result result = new Result();
+        result.setCode(code);
         return result;
     }
 

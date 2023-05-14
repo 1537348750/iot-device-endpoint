@@ -2,6 +2,7 @@ package org.lgq.iot.web.result;
 
 import lombok.extern.slf4j.Slf4j;
 import org.lgq.iot.sdk.mqtt.exception.IoTMqttException;
+import org.lgq.iot.sdk.mqtt.exception.IotCode;
 import org.lgq.iot.sdk.mqtt.utils.ExceptionUtil;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -24,7 +25,7 @@ public class IotExceptionHandler {
     @ExceptionHandler(IoTMqttException.class)
     public Result error(IoTMqttException e) {
         log.error(ExceptionUtil.getBriefStackTrace(e));
-        return Result.failed(IotCode.FAILED).message(e.getMessage());
+        return Result.failed(e.getCode()).message(e.getMessage());
     }
 
 

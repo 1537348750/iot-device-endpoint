@@ -24,8 +24,16 @@ if not exist lib (
   echo lib already exists, skipping mkdir command
 )
 
+if not exist cert (
+  mkdir cert
+) else (
+  echo cert already exists, skipping mkdir command
+)
+
 echo xcopy ..\iot-device-web\target\lib\*.jar lib\
 xcopy ..\iot-device-web\target\*.jar lib\
+xcopy ..\iot-device-sdk\src\main\resources\*.jks cert\
+
 
 copy ..\script\start.sh .
 copy ..\script\Dockerfile .

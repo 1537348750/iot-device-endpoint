@@ -16,12 +16,11 @@ import org.lgq.iot.sdk.mqtt.utils.MqttUtil;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 public class MqttClient {
 
-    public static final Integer DEFAULT_QOS = 1;
+    public static final Integer DEFAULT_QOS = 0;
 
     private String serverIp;
     private final String deviceId;
@@ -53,6 +52,10 @@ public class MqttClient {
         return this.topicManager;
     }
 
+    public Integer getQosLevel() {
+        return qosLevel;
+    }
+
     /**
      * mqtt建链
      * @param isSSL true:url=ssl://${serverIp}:8883, false:url=tcp://${serverIp}:1883
@@ -80,8 +83,8 @@ public class MqttClient {
         try {
             MqttConnectOptions options = new MqttConnectOptions();
             if (ssl) {
-                String certFileName = "cn-north-4-device-client-rootcert.jks";
-                options.setSocketFactory(MqttUtil.getOptionSocketFactory(Objects.requireNonNull(MqttClient.class.getClassLoader().getResource(certFileName)).getPath()));
+                String certPath = MqttUtil.getCertPath(serverIp);
+                options.setSocketFactory(MqttUtil.getOptionSocketFactory(certPath));
                 options.setHttpsHostnameVerificationEnabled(false);
             }
             DeviceInfo deviceInfo = MqttUtil.getDeviceInfo(deviceId, secret);
@@ -125,18 +128,16 @@ public class MqttClient {
         }
     }
 
-    public Integer getQosLevel() {
-        return qosLevel;
-    }
-
     /**
      * 订阅默认下行topic
      */
     public void subScribeDefaultTopics() {
-        if (topicManager.getDEFAULT_DOWN_TOPICS().size() == 0) {
-            return;
+        if (qosLevel == 1 || qosLevel == 2) {
+            if (topicManager.getDEFAULT_DOWN_TOPICS().size() == 0) {
+                return;
+            }
+            this.subScribeTopics(topicManager.getDEFAULT_DOWN_TOPICS(), null);
         }
-        this.subScribeTopics(topicManager.getDEFAULT_DOWN_TOPICS(), null);
     }
 
     /**
@@ -165,7 +166,6 @@ public class MqttClient {
 
     /**
      * 属性上报
-     * @param properties
      */
     public IMqttDeliveryToken propertiesReport(String properties, Integer qosLv, CustomPublishListener listener) throws MqttException {
         return this.publish(getPayload(properties), topicManager.getPropertiesReportTopic(), qosLv, listener);
@@ -173,9 +173,8 @@ public class MqttClient {
 
     /**
      * 网关子设备属性上报
-     * @param properties
      */
-    public IMqttDeliveryToken gatewaySubDevicePropertiesReport(String properties, Integer qosLv, CustomPublishListener listener)  throws MqttException {
+    public IMqttDeliveryToken gatewaySubDevicePropertiesReport(String properties, Integer qosLv, CustomPublishListener listener) throws MqttException {
         return this.publish(getPayload(properties), topicManager.getGatewaySubDevicePropertiesReportTopic(), qosLv, listener);
     }
 
@@ -187,7 +186,7 @@ public class MqttClient {
     }
 
     /**
-     * 响应命令下发
+     * 响应平台命令下发
      * @param data      命令响应的内容
      * @param requestId 命令下发携带的request_id
      * @param qosLv
@@ -199,6 +198,19 @@ public class MqttClient {
         return this.publish(getPayload(data), topicManager.getCommandsRespTopic(requestId), qosLv, listener);
     }
 
+    /**
+     * 响应平台设置设备属性
+     */
+    public IMqttDeliveryToken propertiesSetResp(String data, String requestId, Integer qosLv, CustomPublishListener listener) throws MqttException {
+        return this.publish(getPayload(data), topicManager.getPropertiesSetRespTopic(requestId), qosLv, listener);
+    }
+
+    /**
+     * 发布json数据
+     */
+    public IMqttDeliveryToken publishData(String json, String topic, Integer qosLv, CustomPublishListener listener) throws MqttException {
+        return this.publish(getPayload(json), topic, qosLv, listener);
+    }
 
     /**
      * 发布二进制数据

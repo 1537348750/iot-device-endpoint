@@ -34,7 +34,7 @@ public class DefaultMqttCallback implements CustomMqttCallback {
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-        log.info("Mqtt message deliver complete");
+        //log.info("Mqtt message deliver complete");
     }
 
     @Override

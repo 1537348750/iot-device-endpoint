@@ -11,6 +11,8 @@ import org.lgq.iot.sdk.mqtt.utils.BeanUtil;
 import org.lgq.iot.sdk.mqtt.utils.ExceptionUtil;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 public class DefaultResponseListener implements CustomResponseListener {
@@ -22,22 +24,35 @@ public class DefaultResponseListener implements CustomResponseListener {
                 log.debug("commands response...");
                 autoCommandResponse(client, topic, mqttMessage);
             }
+            if (topic.contains("/sys/properties/set")) {
+                log.debug("properties set response...");
+                propertiesSetResp(client, topic, mqttMessage);
+            }
         }
-
-
     }
 
     private void autoCommandResponse(MqttClient client, String topic, MqttMessage mqttMessage) {
         try {
+            // 下发的命令内容在MqttMessage对象中，根据不同的命令让设备去执行不同的任务
+            // TODO 实现根据下发的命令执行自定义任务...
             CommandsRespDTO commandsResp = new CommandsRespDTO();
             commandsResp.setParas(Collections.singletonMap("result", "success"));
             client.commandsResp(BeanUtil.pojoToJson(commandsResp), getRequestId(topic), null, null);
-
-            // 下发的命令内容在MqttMessage对象中，根据不同的命令让设备去执行不同的任务
-            // TODO 实现根据下发的命令执行自定义任务...
-
         } catch (MqttException e) {
             log.error("command response fail, e = {}", ExceptionUtil.getBriefStackTrace(e));
+        } catch (JsonProcessingException e) {
+            log.error("json process fail, e = {}", ExceptionUtil.getBriefStackTrace(e));
+        }
+    }
+
+    private void propertiesSetResp(MqttClient client, String topic, MqttMessage mqttMessage) {
+        Map<String, Object> map = new HashMap<>(4);
+        map.put("result_code", 0);
+        map.put("result_desc", "success");
+        try {
+            client.propertiesSetResp(BeanUtil.pojoToJson(map), getRequestId(topic), null, null);
+        } catch (MqttException e) {
+            log.error("properties set response fail, e = {}", ExceptionUtil.getBriefStackTrace(e));
         } catch (JsonProcessingException e) {
             log.error("json process fail, e = {}", ExceptionUtil.getBriefStackTrace(e));
         }

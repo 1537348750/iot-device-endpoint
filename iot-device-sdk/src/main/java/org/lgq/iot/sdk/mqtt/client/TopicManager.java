@@ -65,12 +65,12 @@ public class TopicManager {
         this.shadowGetRespTopic = topicPrefix + "shadow/get/response/#";
         this.eventsUpTopic = topicPrefix + "events/up";
         this.eventsDownTopic = topicPrefix + "events/down";
-        // DEFAULT_DOWN_TOPICS.add(messagesDownTopic);
-        // DEFAULT_DOWN_TOPICS.add(commandsDownTopic);
-        // DEFAULT_DOWN_TOPICS.add(propertiesSetTopic);
-        // DEFAULT_DOWN_TOPICS.add(propertiesGetTopic);
-        // DEFAULT_DOWN_TOPICS.add(shadowGetRespTopic);
-        // DEFAULT_DOWN_TOPICS.add(eventsDownTopic);
+        DEFAULT_DOWN_TOPICS.add(messagesDownTopic);
+        DEFAULT_DOWN_TOPICS.add(commandsDownTopic);
+        DEFAULT_DOWN_TOPICS.add(propertiesSetTopic);
+        DEFAULT_DOWN_TOPICS.add(propertiesGetTopic);
+        DEFAULT_DOWN_TOPICS.add(shadowGetRespTopic);
+        DEFAULT_DOWN_TOPICS.add(eventsDownTopic);
     }
 
     public String getMessagesUpTopic() {

@@ -9,7 +9,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @Slf4j
-public class ContainerIPConfig {
+public class IPConfig {
 
     private static String containerIp;
 
@@ -22,11 +22,10 @@ public class ContainerIPConfig {
 
     public static void init() {
         try {
-            InetAddress addr = InetAddress.getLocalHost();
-            containerIp = addr.getHostAddress();
+            containerIp = InetAddress.getLocalHost().getHostAddress();
             log.info("Current container IP address is: {}", containerIp);
         } catch (UnknownHostException e) {
-            log.error("Could not determine IP address of container, e = {}", ExceptionUtil.getBriefStackTrace(e));
+            log.error("Could not get IP address of container, e = {}", ExceptionUtil.getBriefStackTrace(e));
         }
     }
 }

@@ -3,6 +3,7 @@ package org.lgq.iot.web.cache;
 import lombok.extern.slf4j.Slf4j;
 import org.lgq.iot.sdk.mqtt.client.MqttClient;
 import org.lgq.iot.sdk.mqtt.utils.ExceptionUtil;
+import org.lgq.iot.web.config.IPConfig;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,16 +21,16 @@ public class ClientCache {
         return DEVICE_CACHE.get(deviceId);
     }
 
-    public static MqttClient removeClient(String deviceId) {
+    public static void removeClient(String deviceId) {
         try {
             MqttClient client = getClient(deviceId);
             if (client != null) {
                 client.close();
-                return DEVICE_CACHE.remove(deviceId);
+                DEVICE_CACHE.remove(deviceId);
+                log.info("Mqtt device offline, deviceId={}, containerIp={}", deviceId, IPConfig.getContainerIp());
             }
         } catch (Exception e) {
             log.error("close client fail, e = {}", ExceptionUtil.getBriefStackTrace(e));
         }
-        return null;
     }
 }

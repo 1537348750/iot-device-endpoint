@@ -8,6 +8,7 @@ image_name="iot-device-web-$date"
 docker build --no-cache -t "$image_name" .
 
 rm -rf lib/
+rm -rf cert/
 rm -f start.sh
 rm -f Dockerfile
 rm -f iot-device-web-package.zip

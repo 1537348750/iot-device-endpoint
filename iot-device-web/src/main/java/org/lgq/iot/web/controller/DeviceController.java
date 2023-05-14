@@ -2,10 +2,10 @@ package org.lgq.iot.web.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.lgq.iot.sdk.mqtt.utils.BeanUtil;
+import org.lgq.iot.sdk.mqtt.exception.IotCode;
 import org.lgq.iot.web.dto.DeviceInfoDto;
 import org.lgq.iot.web.dto.SubscribeTopics;
 import org.lgq.iot.web.result.Result;
-import org.lgq.iot.web.result.IotCode;
 import org.lgq.iot.web.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

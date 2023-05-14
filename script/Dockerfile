@@ -1,9 +1,4 @@
-
 FROM openjdk:8-jre-alpine
-# FROM openjdk:8-jre-slim
-# FROM openjdk:8-jre
-# FROM adoptopenjdk:8-jre-hotspot
-# FROM amazoncorretto:8
 
 LABEL maintainer="LGQ"
 
@@ -12,6 +7,7 @@ ENV APP_NAME iot-device-web-1.0.0.jar
 
 RUN mkdir -p /iot \
         $APP_HOME/lib \
+        $APP_HOME/cert \
         $APP_HOME/script \
         $APP_HOME/logs/history
 
@@ -20,6 +16,7 @@ RUN chown -R paas:paas /iot && chmod -R 755 /iot
 
 # copy file
 COPY lib $APP_HOME/lib
+COPY cert $APP_HOME/cert
 COPY start.sh $APP_HOME/script
 COPY Dockerfile $APP_HOME/script
 
@@ -27,7 +24,6 @@ WORKDIR $APP_HOME
 EXPOSE 8001
 USER paas
 CMD ["sh", "/iot/iot-device-web/script/start.sh"]
-
 
 
 # 构建Docker镜像时，选择合适的基础镜像非常重要，它会影响到你的应用程序的运行效率、安全性等方面。
@@ -41,4 +37,5 @@ CMD ["sh", "/iot/iot-device-web/script/start.sh"]
 # 如果你的应用程序需要更小的镜像，可以选择openjdk:8-jre-slim或openjdk:8-jre-alpine；
 # 如果你需要更好的性能，可以选择openjdk:8-jre或adoptopenjdk:8-jre-hotspot；
 # 如果你需要更好的安全性，可以选择amazoncorretto:8。
+# PS:选择不同的基础镜像，添加子用户的命令也不一样，需要修改
 
