@@ -10,9 +10,11 @@ public class IpUtil {
 
     public static String parseIP(String host) {
         try {
-            return InetAddress.getByName(host).getHostAddress();
+            String ip = InetAddress.getByName(host).getHostAddress();
+            log.info("parse [{}] success, ip={}", host, ip);
+            return ip;
         } catch (UnknownHostException e) {
-            log.error("parse ip:[{}] fail, e = {}", host, ExceptionUtil.getBriefStackTrace(e));
+            log.error("parse [{}] fail, e = {}", host, ExceptionUtil.getBriefStackTrace(e));
             return host;
         }
     }

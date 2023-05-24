@@ -2,7 +2,7 @@ package org.lgq.iot.sdk.mqtt.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.lgq.iot.sdk.mqtt.client.DeviceInfo;
-import org.lgq.iot.sdk.mqtt.constant.CertEnum;
+import org.lgq.iot.sdk.mqtt.constant.CertPath;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -70,27 +70,7 @@ public class MqttUtil {
 
     public static String getCertPath(String serverIp) {
         String ip = IpUtil.parseIP(serverIp);
-        String certPath;
-        if (CertEnum.CN_NORTH_4_SHARE_INSTANCE.getIp().equals(ip)) {
-            certPath = CertEnum.CN_NORTH_4_SHARE_INSTANCE.getCertPath();
-        } else if (CertEnum.CN_NORTH_4_STANDARD_INSTANCE.getIp().equals(ip)) {
-            certPath = CertEnum.CN_NORTH_4_STANDARD_INSTANCE.getCertPath();
-        } else if (CertEnum.CN_EAST_3_STANDARD_INSTANCE.getIp().equals(ip)) {
-            certPath = CertEnum.CN_EAST_3_STANDARD_INSTANCE.getCertPath();
-        } else if (CertEnum.CN_SOUTH_1_STANDARD_INSTANCE.getIp().equals(ip)) {
-            certPath = CertEnum.CN_SOUTH_1_STANDARD_INSTANCE.getCertPath();
-        } else if (CertEnum.CN_SOUTH_4_STANDARD_INSTANCE.getIp().equals(ip)) {
-            certPath = CertEnum.CN_SOUTH_4_STANDARD_INSTANCE.getCertPath();
-        } else if (CertEnum.AP_SOUTHEASR_1_STANDARD_INSTANCE.getIp().equals(ip)) {
-            certPath = CertEnum.AP_SOUTHEASR_1_STANDARD_INSTANCE.getCertPath();
-        } else if (CertEnum.AP_SOUTHEASR_2_STANDARD_INSTANCE.getIp().equals(ip)) {
-            certPath = CertEnum.AP_SOUTHEASR_2_STANDARD_INSTANCE.getCertPath();
-        } else if (CertEnum.AP_SOUTHEASR_3_STANDARD_INSTANCE.getIp().equals(ip)) {
-            certPath = CertEnum.AP_SOUTHEASR_3_STANDARD_INSTANCE.getCertPath();
-        } else {
-            certPath = null;
-        }
-        return certPath;
+        return CertPath.CERTPATH.get(serverIp);
     }
 
 
@@ -153,7 +133,7 @@ public class MqttUtil {
         String timeStamp = getTimeStamp();
         String clientId = getClientId(deviceId, timeStamp);
         String password = getPassword(secret, timeStamp);
-        return new DeviceInfo(clientId, password);
+        return new DeviceInfo(clientId, password, timeStamp);
     }
 
     /**

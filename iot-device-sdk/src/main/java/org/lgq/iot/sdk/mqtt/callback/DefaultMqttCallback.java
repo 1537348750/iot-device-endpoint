@@ -28,7 +28,7 @@ public class DefaultMqttCallback implements CustomMqttCallback {
 
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-        log.info("Receive mqtt topic={}, message={}", topic, message);
+        log.info("Receive mqtt topic={}, message={}\n", topic, message);
         responseListener.response(client, topic, message);
     }
 

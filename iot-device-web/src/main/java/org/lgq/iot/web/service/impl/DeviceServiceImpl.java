@@ -6,6 +6,7 @@ import org.lgq.iot.sdk.mqtt.client.MqttClient;
 import org.lgq.iot.sdk.mqtt.exception.IoTMqttException;
 import org.lgq.iot.sdk.mqtt.exception.IotCode;
 import org.lgq.iot.web.cache.ClientCache;
+import org.lgq.iot.web.callback.IoTMqttCallback;
 import org.lgq.iot.web.config.IPConfig;
 import org.lgq.iot.web.dto.DeviceInfoDto;
 import org.lgq.iot.web.dto.SubscribeTopics;
@@ -27,7 +28,7 @@ public class DeviceServiceImpl implements DeviceService {
                 deviceInfoDto.getDeviceId(),
                 deviceInfoDto.getSecret(),
                 deviceInfoDto.getQos());
-        client.connect(deviceInfoDto.getIsSSL());
+        client.connect(deviceInfoDto.getIsSSL(), new IoTMqttCallback(client, null), null);
         ClientCache.cacheClient(deviceInfoDto.getDeviceId(), client);
         log.info("Mqtt device online, deviceId={}, containerIp={}, qos={}",
                 deviceInfoDto.getDeviceId(), IPConfig.getContainerIp(), client.getQosLevel());

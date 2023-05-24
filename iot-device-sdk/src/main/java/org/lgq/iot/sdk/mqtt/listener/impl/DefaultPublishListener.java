@@ -17,7 +17,7 @@ public class DefaultPublishListener implements CustomPublishListener {
 
     @Override
     public void onSuccess(IMqttToken iMqttToken) {
-        log.info("Publish mqtt message success, topic={}, message={}",
+        log.info("Publish mqtt message success, topic={}, message={}\n",
                 iMqttToken.getTopics()[0], new String(payload, StandardCharsets.UTF_8));
     }
 

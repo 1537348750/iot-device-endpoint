@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class DeviceInfo {
     private String clientId;
     private String password;
+    private String timestamp;
 }
