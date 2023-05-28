@@ -15,17 +15,15 @@ public class ReportProcess {
     private byte bDeviceReq = 0x00;
     private byte bDeviceRsp = 0x01;
 
+    private byte noMid = 0x00;
+    private byte hasMid = 0x01;
+    private boolean isContainMid = false;
+    private int mid = 0;
 
     // serviceId = LgqService
     private int id = 0;
     private double id_d;
     private String id_s;
-
-
-    private byte noMid = 0x00;
-    private byte hasMid = 0x01;
-    private boolean isContainMid = false;
-    private int mid = 0;
 
     /**
      * @param binaryData 设备发送给平台coap报文的payload部分
@@ -62,7 +60,11 @@ public class ReportProcess {
 
             // 获取数据正文内容，需要在编码的时候按顺序编写每个属性的值
             byte[] payload = new byte[binaryData.length - 4];
-            System.arraycopy(binaryData, 4, payload, 0, binaryData.length - 4);
+            // 从第四个编码开始为正文
+            for (int i = 4; i < binaryData.length; i++) {
+                payload[i - 4] = binaryData[i];
+            }
+            //System.arraycopy(binaryData, 4, payload, 0, binaryData.length - 4);
             String hexStr = Utilty.bytes2HexStr(payload).toUpperCase();
             String[] rawData = hexStr.split(HexEncodeUtil.Delimiter);
 
@@ -83,7 +85,7 @@ public class ReportProcess {
             "identifier":"123",
             "msgType":"deviceRsp",
             "errcode":0,
-            "body" :{****} 特别注意该body体为一层json结构。
+            "body" :{xxxx} 特别注意该body体为一层json结构。
         }
 	    */
         else if (binaryData[2] == bDeviceRsp) {

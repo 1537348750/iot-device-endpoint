@@ -25,7 +25,7 @@ public class ReportPrcossTest {
     @Test
     public void testLgqServiceReport() {
         try {
-            String hex = HexEncodeUtil.encodeLgqService(1089, 1.00808d, "Hello World !!!");
+            String hex = HexEncodeUtil.encodeLgqService(199, 1.0000009d, "Hello World !!!");
             byte[] payload = Utilty.hexStrToBytes(hex);
             System.out.println("LgqServiceHexStr => " + hex);
 
